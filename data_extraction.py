@@ -1,6 +1,7 @@
 from database_utils import DataConnector
 import pandas as pd
 import sys
+import tabula
 sys.path.append('../')
 
 
@@ -24,12 +25,13 @@ class DataExtractor:
         # df.to_csv('Output.csv', index = False)
         return df 
     
+    def retrieve_pdf_data(self,link):
+        return pd.concat(tabula.read_pdf(link, pages='all'))
+    
 
 
 
 if __name__ == '__main__':
     extract = DataExtractor()
     extract.read_rds_tables('legacy_users')
-    comfofn
-    fofm
     

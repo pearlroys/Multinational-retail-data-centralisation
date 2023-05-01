@@ -67,7 +67,7 @@ class DataCleaning:
         # df[column].astype(int)
 
         # Format phone numbers as (XXX) XXX-XXXX
-        df[column] = df[column].apply(lambda x: '({}) {}-{}'.format(x[0:3], x[3:6], x[6:]))
+        df[column] = df[column].apply(lambda x: '{} {}-{}'.format(x[0:3], x[3:6], x[6:]))
 
         # Remove the second and third digits if they are '00'
         df[column] = df[column].apply(lambda x: x[0] + x[3:] if x[1:3] == '00' else x)
@@ -80,14 +80,3 @@ class DataCleaning:
         df[column] = df[column].str.replace(r'GGB', 'GB')
         return df 
     
-if __name__ == '__main__':
-    cleaner = DataCleaning()
-    reader = DataConnector()
-    engine = reader.init_db_engine()
-    engine.connect()
-    print("Hi") 
-    print(engine)
-    df = pd.read_csv('output.csv', index_col=0)
-    cleaner.clean_user_data(df)
-   
-    reader.upload_to_db(df, 'dim_users', engine)   
