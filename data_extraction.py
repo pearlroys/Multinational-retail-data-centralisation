@@ -30,3 +30,6 @@ class DataExtractor:
 if __name__ == '__main__':
     extract = DataExtractor()
     extract.read_rds_tables('legacy_users')
+    comfofn
+    fofm
+    
