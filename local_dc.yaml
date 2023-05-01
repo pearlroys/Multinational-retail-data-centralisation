@@ -1,6 +1,1 @@
-RDS_HOST: localhost
-RDS_PASSWORD: pearlroys
-RDS_USER: postgres
-RDS_DATABASE: Sales_Data
-RDS_API: psycopg2
-RDS_PORT: 5432
+
