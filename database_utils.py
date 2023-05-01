@@ -1,12 +1,13 @@
 import yaml
-from yaml.loader import SafeLoader
 import psycopg2
 from sqlalchemy import create_engine
 from sqlalchemy import inspect
 import pandas as pd
+
 class DataConnector:
     def __init__(self) -> None:
         self.data = self.read_db_creds()
+        
 
     def read_db_creds(self):
         """ This function parse and converts a YAML object to a Python dictionary (dict object). 
@@ -23,21 +24,34 @@ class DataConnector:
         return self.engine
     
     def list_db_tables(self):
+        """This function returns an Inspector object, which is a wrapper around the database, 
+        and it allows us to retrieve information about the tables and columns inside the database.
+
+        Returns:
+            list of tables in the database
+        """
         
         self.engine.connect()
         inspector = inspect(self.engine)
         return inspector.get_table_names()
+    
+    def upload_to_db(self, df, new_table_name, engine):
+        df.to_sql(new_table_name, engine, if_exists='replace')
 
        
-        
 
 
-
-
-
+    
 
 if __name__ == '__main__':
     reader = DataConnector()
-    reader.read_db_creds()
-    reader.init_db_engine()
-    reader.list_db_tables()
+    engine = reader.init_db_engine()
+    engine.connect()
+    print("Hi") 
+    print(engine)
+    
+    
+    
+  
+    
+    

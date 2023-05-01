@@ -19,10 +19,10 @@ class DataExtractor:
     to avoid this error you need to pass a connection (not the engine) and you need to use 
     the text function to convert the query.
         """
-        conn = self.engine.connect()
-        df = pd.read_sql_table(table_name, conn)
-        df.to_csv('Output.csv', index = False)
-        # return df 
+        self.conn = self.engine.connect()
+        df = pd.read_sql_table(table_name, self.conn)
+        # df.to_csv('Output.csv', index = False)
+        return df 
     
 
 
