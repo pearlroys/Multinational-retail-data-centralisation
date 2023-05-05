@@ -8,7 +8,8 @@ sys.path.append('../')
 
 class DataCleaning:
     def __init__(self) -> None:
-        self.reader = DataConnector()
+        # self.reader = DataConnector()
+        pass
         
 
     def clean_user_data(self, df):
@@ -79,4 +80,23 @@ class DataCleaning:
     def modify_country_code(self, df, column):
         df[column] = df[column].str.replace(r'GGB', 'GB')
         return df 
+    
+    def clean_card_data(self, df):
+        
+        # replace ? at the begininning of card number 
+        df['card_number'] = df['card_number'].replace(r'\?', '', regex=True)
+        # print(df) where nan
+        print(df['card_number'].isna().sum())
+        # change data type to str
+        df['card_number'] = df['card_number'].astype(str)
+
+        # confirm ? is not in df[card_number]
+        new_df = df.loc[df['card_number'].str.startswith('?')].copy()
+        # # print the result
+        print(new_df['card_number'])
+        
+        df = self.format_date(df,'date_payment_confirmed') 
+        print(df.dtypes) 
+        df.dropna(how='any')
+        return df
     
