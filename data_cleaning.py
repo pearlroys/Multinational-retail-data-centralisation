@@ -100,3 +100,6 @@ class DataCleaning:
         df.dropna(how='any')
         return df
     
+    def clean_store_data(self, df):
+        pass
+    

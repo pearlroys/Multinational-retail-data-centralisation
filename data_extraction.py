@@ -3,13 +3,17 @@ import pandas as pd
 import sys
 import tabula
 import re
+# import boto3
+import json
+import requests
 sys.path.append('../')
 
 
 
 class DataExtractor:
     def __init__(self) -> None:
-        pass
+        self.api_key = {'x-api-key':'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
+                        
         
      
     def  read_rds_tables(self, table_name, engine):
@@ -35,12 +39,27 @@ class DataExtractor:
     def retrieve_pdf_data(self,link):
         return pd.concat(tabula.read_pdf(link, pages='all'))
     
+    def list_number_of_stores(self):
+        endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
+        response = requests.get(endpoint, headers=self.api_key)
+        return response.json()['number_stores']
+
+    def retrieve_stores_data(self):
+        store_number   = self.list_number_of_stores()
+        frames = []
+        for i in range(store_number):
+            endpoint = f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{i}'
+            response = requests.get(endpoint, headers=self.api_key)
+            frames.append( pd.json_normalize(response.json()))
+        return pd.concat(frames)
+        
+
+            
+    
     
 
 if __name__ == '__main__':
     extract = DataExtractor()
-    # extract.read_rds_tables('legacy_users')
+    extract.retrieve_stores_data()
     
-    pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
-    df = extract.retrieve_pdf_data(pdf_path)
-   
+    

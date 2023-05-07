@@ -46,4 +46,14 @@ def upload_dim_card_details():
     engine.connect()
     reader.upload_to_db(df,'dim_card_details',engine)
 
-upload_dim_users()
+def upload_dim_store_details():
+    extract = DataExtractor()
+    cleaner = DataCleaning()
+    reader = DataConnector()
+    # get data
+    df = extract.retrieve_stores_data()
+    # df.to_csv('dim_store_details.csv')
+    # print(df.head)
+
+
+upload_dim_store_details()
