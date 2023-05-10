@@ -100,6 +100,36 @@ class DataCleaning:
         df.dropna(how='any')
         return df
     
+    def remove_char_from_string(self, value):
+        return re.sub(r'\D', '',value)
+    
     def clean_store_data(self, df):
-        pass
+        # change datetime datatype
+        df = self.format_date(df,'opening_date')
+
+        # df.drop(columns='lat',inplace=True)
+        df.drop(columns='lat',inplace=True)
+
+        # drop rown with nan's
+        df = df.dropna(subset=['address'], how='any')
+
+        # Remove newline characters from the 'address' column
+        df['address'] = df['address'].str.replace('\n', '')
+
+        # drop cryptic values
+        values = ['QP74AHEQT0',
+       'O0QJIRC943', '50IB01SFAZ', '0RSNUU3DF5', 'B4KVQB3P5Y',
+       'X0FE7E2EOG', 'NN04B3F6UQ']
+        df = df.drop(df[df['store_type'].isin(values)].index)
+
+         # change datatype for longitude and lat
+        df['latitude'] = df['latitude'].astype(float)
+
+        # Replace multiple values in a specific column using a dictionary where eeruope and eeamerica is present
+        replace_dict = {'eeEurope': 'Europe', 'eeAmerica': 'America'}
+        df['continent'] = df['continent'].replace(replace_dict)
+        # change datatype of staff_numbers
+        df['staff_numbers'] =  pd.to_numeric( df['staff_numbers'].apply(self.remove_char_from_string),errors='coerce', downcast="integer")
+        df['longitude'] =  pd.to_numeric( df['longitude'].apply(self.remove_char_from_string),errors='coerce', downcast="float")
+        return df
     

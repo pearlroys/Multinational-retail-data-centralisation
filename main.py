@@ -49,11 +49,18 @@ def upload_dim_card_details():
 def upload_dim_store_details():
     extract = DataExtractor()
     cleaner = DataCleaning()
-    reader = DataConnector()
+    reader = DataConnector() 
     # get data
     df = extract.retrieve_stores_data()
-    # df.to_csv('dim_store_details.csv')
-    # print(df.head)
+    # clean data 
+    # df = pd.read_csv('frames.csv', index_col=0)
+    df = cleaner.clean_store_data(df)
+    print(df.head)
+    # upload to db 
+    local_db = reader.read_db_creds("local_dc.yaml")  
+    engine = reader.init_db_engine(local_db)
+    engine.connect()
+    reader.upload_to_db(df,'dim_store_details',engine)
 
 
 upload_dim_store_details()
