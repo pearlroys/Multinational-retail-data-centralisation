@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import tabula
 import re
-# import boto3
+import boto3
 import json
 import requests
 sys.path.append('../')
@@ -52,6 +52,25 @@ class DataExtractor:
             response = requests.get(endpoint, headers=self.api_key)
             frames.append( pd.json_normalize(response.json()))
         return pd.concat(frames)
+    
+    def extract_from_s3(self):
+        s3_client = boto3.client("s3")
+        # Specify the bucket and object key
+        bucket_name = 'data-handling-public'
+        object_key = 'products.csv'
+
+        # Retrieve the object from S3
+        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
+        status   = response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+        # Access the data from the response
+        if status == 200:
+            print(f"Successful S3 get_object response. Status - {status}")
+            
+            df = pd.read_csv(response.get("Body"))
+            return df
+        else:
+            print(f"Unsuccessful S3 get_object response. Status - {status}")
+
         
 
             
@@ -60,6 +79,6 @@ class DataExtractor:
 
 if __name__ == '__main__':
     extract = DataExtractor()
-    extract.retrieve_stores_data()
+    extract.extract_from_s3()
     
     

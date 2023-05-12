@@ -133,3 +133,8 @@ class DataCleaning:
         df['longitude'] =  pd.to_numeric( df['longitude'].apply(self.remove_char_from_string),errors='coerce', downcast="float")
         return df
     
+
+    def convert_product_weights(self,df,column_name):
+        print(df.shape)
+        
+    
