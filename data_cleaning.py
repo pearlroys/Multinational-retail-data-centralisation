@@ -180,3 +180,23 @@ class DataCleaning:
         first_value = int(parts[0])
         other_value = int(parts[1])
         return (first_value * other_value) /1000
+    
+    def clean_order_data(self, df):
+        df.drop(columns='1',inplace=True)
+        # df.drop(columns='Unnamed: 0',inplace=True)
+        df.drop(columns='first_name',inplace=True)
+        df.drop(columns='last_name',inplace=True)
+        del df['index']
+        df.reset_index(drop=True)
+        df.drop(columns='level_0',inplace=True)
+        df.dropna(how='any')
+        return df
+    
+    def clean_date_time(self, df):
+        df['month']         =  pd.to_numeric( df['month'],errors='coerce', downcast="integer")
+        df['year']          =  pd.to_numeric( df['year'], errors='coerce', downcast="integer")
+        df['day']           =  pd.to_numeric( df['day'], errors='coerce', downcast="integer")
+        df['timestamp']     =  pd.to_datetime(df['timestamp'], format='%H:%M:%S', errors='coerce')
+        df.dropna(how='any',inplace= True)
+        df.reset_index(drop=True)       
+        return df

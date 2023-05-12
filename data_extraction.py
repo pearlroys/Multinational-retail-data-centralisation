@@ -70,7 +70,17 @@ class DataExtractor:
             return df
         else:
             print(f"Unsuccessful S3 get_object response. Status - {status}")
+    def extract_json_from_s3(self):
 
+        # Provide the S3 link to the JSON file
+        s3_link = 'https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json'
+        # Download the JSON file
+        response = requests.get(s3_link)
+        data = response.json()
+
+        # Convert the JSON data to a DataFrame
+        df = pd.DataFrame(data)
+        return df
         
 
             
@@ -79,6 +89,6 @@ class DataExtractor:
 
 if __name__ == '__main__':
     extract = DataExtractor()
-    extract.extract_from_s3()
+    extract.extract_json_from_s3()
     
     
