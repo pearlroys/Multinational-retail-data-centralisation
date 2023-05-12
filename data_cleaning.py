@@ -134,7 +134,49 @@ class DataCleaning:
         return df
     
 
-    def convert_product_weights(self,df,column_name):
-        print(df.shape)
-        
+    def clean_products_data(self, df):
+        # change datetime datatype
+        df =  self.format_date(df,'date_added')
+        df['product_price (£)'] = df['product_price'].str.replace('£', '').astype(float)
+        df = df.dropna(subset=['product_name'],how='any')
+        df.drop(columns='Unnamed: 0', inplace = True)
+        df.reset_index(drop=True, inplace=True)
+        df.dropna(how='any',inplace= True)       
+        return df
     
+    def convert_product_weights(self, df):
+
+        # Convert the numbers column to string
+        df['weight'] = df['weight'].astype(str)
+
+        # Extract the letters from the numbers column
+        df['unit'] = df['weight'].str.extract(r'([a-zA-Z]+)')
+        df['unit'] = df['unit'].astype(str)
+
+        # Print the resulting DataFrame with the extracted letters
+        df['unit'].unique()
+        
+        # get all the numbers without the units and convert to float
+        df["numbers"] = df["weight"].str.extract("(\d*\.?\d+)", expand=True)
+        df['numbers'] = df['numbers'].astype(float)
+        # convert weights all to KG
+        df['weight (KG)'] = df.loc[df['unit'] == 'x', 'weight'].apply(lambda x: self.extract_numeric_value(x))
+        df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'ml', df['numbers']/ 1000)
+        df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'kg', df['numbers'])
+        df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'g', df['numbers']/ 1000)
+        df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'oz', df['numbers']/ 35.27)
+        # remove rows with cryptic and unidentifiable units
+        
+        df = df[df['unit'] != 'GO']
+        df = df[df['unit'] != 'MX']
+        df = df[df['unit'] != 'Z']
+        return df
+            
+    def extract_numeric_value(self, weight):
+        # we can remove last value 'g'
+        values = weight[:-1]
+        # Split the string by 'x' and extract the first part and multiply by second part
+        parts = values.split('x')
+        first_value = int(parts[0])
+        other_value = int(parts[1])
+        return (first_value * other_value) /1000

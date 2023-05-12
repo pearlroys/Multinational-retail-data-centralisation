@@ -69,11 +69,11 @@ def upload_dim_products():
     reader = DataConnector() 
     # get data from s3
     df =  extract.extract_from_s3()
-    df =  cleaner.convert_product_weights(df,'weight')
-    df.to_csv('dim_products.csv')
+    # df.to_csv('dim_products.csv')
     # clean data 
     df =  cleaner.clean_products_data(df)
-    print(df['product_price'].sum())
+    df =  cleaner.convert_product_weights(df)
+    # print(df['product_price'].sum())
     # upload to db 
     local_db = reader.read_db_creds("local_dc.yaml")  
     engine = reader.init_db_engine(local_db)
