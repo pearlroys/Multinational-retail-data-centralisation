@@ -89,6 +89,7 @@ class DataExtractor:
 
 if __name__ == '__main__':
     extract = DataExtractor()
-    extract.extract_json_from_s3()
+    # link = upload_dim_card_details
+    # extract.retrieve_pdf_data(link)
     
     

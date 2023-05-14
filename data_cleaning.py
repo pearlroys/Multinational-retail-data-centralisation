@@ -23,6 +23,12 @@ class DataCleaning:
             _type_: cleaned date frame
         """
         df = self.format_date(df, 'date_of_birth')
+        df.dropna(subset=['date_of_birth'],how='all')
+        pattern = r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+
+        # Filter the DataFrame to get rows where 'uuid' contains valid UUID codes
+        df = df[df['user_uuid'].str.match(pattern, na=False)]
+        df.reset_index(drop=True)
         df = self.format_date(df, 'join_date')        
         df = self.modify_phone_num(df, 'phone_number')
         df = self.modify_country_code(df, 'country_code')
@@ -47,7 +53,7 @@ class DataCleaning:
 
           #         print(invalid_dates)
         # 36 NaT values were found and dropped.
-        df = df.dropna(subset=[column],how='any')
+        # df = df.dropna(subset=[column],how='all')
         return df
         
     def modify_phone_num(self, df, column):
@@ -97,7 +103,7 @@ class DataCleaning:
         
         df = self.format_date(df,'date_payment_confirmed') 
         print(df.dtypes) 
-        df.dropna(how='any')
+        # df.dropna(how='any')
         return df
     
     def remove_char_from_string(self, value):
@@ -105,13 +111,14 @@ class DataCleaning:
     
     def clean_store_data(self, df):
         # change datetime datatype
-        df = self.format_date(df,'opening_date')
+        print(df.shape)
+        df = self.format_date(df, 'opening_date')
 
         # df.drop(columns='lat',inplace=True)
-        df.drop(columns='lat',inplace=True)
+        df.drop(columns= 'lat', inplace=True)
 
         # drop rown with nan's
-        df = df.dropna(subset=['address'], how='any')
+        df = df.dropna(subset=['store_code'], how='any')
 
         # Remove newline characters from the 'address' column
         df['address'] = df['address'].str.replace('\n', '')
@@ -120,28 +127,23 @@ class DataCleaning:
         values = ['QP74AHEQT0',
        'O0QJIRC943', '50IB01SFAZ', '0RSNUU3DF5', 'B4KVQB3P5Y',
        'X0FE7E2EOG', 'NN04B3F6UQ']
-        df = df.drop(df[df['store_type'].isin(values)].index)
-
-         # change datatype for longitude and lat
-        df['latitude'] = df['latitude'].astype(float)
+        # df = df.drop(df[df['store_type'].isin(values)].index)
+        df = df[~df['store_type'].isin(values)]
 
         # Replace multiple values in a specific column using a dictionary where eeruope and eeamerica is present
         replace_dict = {'eeEurope': 'Europe', 'eeAmerica': 'America'}
         df['continent'] = df['continent'].replace(replace_dict)
-        # change datatype of staff_numbers
-        df['staff_numbers'] =  pd.to_numeric( df['staff_numbers'].apply(self.remove_char_from_string),errors='coerce', downcast="integer")
-        df['longitude'] =  pd.to_numeric( df['longitude'].apply(self.remove_char_from_string),errors='coerce', downcast="float")
+    
         return df
     
 
     def clean_products_data(self, df):
         # change datetime datatype
         df =  self.format_date(df,'date_added')
-        df['product_price (£)'] = df['product_price'].str.replace('£', '').astype(float)
-        df = df.dropna(subset=['product_name'],how='any')
+        df = df.dropna(subset=['product_name'],how='all')
         df.drop(columns='Unnamed: 0', inplace = True)
         df.reset_index(drop=True, inplace=True)
-        df.dropna(how='any',inplace= True)       
+        df.dropna(how='all',inplace= True)       
         return df
     
     def convert_product_weights(self, df):
