@@ -85,11 +85,19 @@ FROM (
 WHERE dim_date_times.timestamp = x.timestamp;
 
 
-With h AS (
-SELECT "year", "month", timestamp, LAG(timestamp) OVER (ORDER BY "day", "month", "year", timestamp DESC ) - timestamp AS time_diff
-FROM dim_date_times		 		  
-group by dim_date_times.year, timestamp, "day", "month", "year") 
-select "year", abs(AVG(EXTRACT(EPOCH FROM time_diff)::integer))AS avg_absolute_diff
-from h
+
+SELECT
+    year,
+    JSON_BUILD_OBJECT(
+        'hours', ROUND(AVG(EXTRACT(HOUR FROM time_diff))),
+        'minutes', ROUND(AVG(EXTRACT(MINUTE FROM time_diff))),
+        'seconds', ROUND(AVG(EXTRACT(SECOND FROM time_diff))),
+        'milliseconds', ROUND(AVG(EXTRACT(MILLISECONDS FROM time_diff)))
+    ) AS actual_time_taken
+
+from (
+SELECT "day", "month", "year", timestamp, LAG(timestamp) OVER (PARTITION BY year, month, day ORDER BY "day", "month", "year", timestamp DESC ) - timestamp AS time_diff
+FROM dim_date_times	 		  
+) as subquery
 group by "year"
-order by "year"
+order by avg(time_diff) desc
