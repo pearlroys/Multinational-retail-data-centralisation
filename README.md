@@ -110,7 +110,7 @@ UPDATE dim_products
 
 As our primary and foreign keys are settled and data are clean, we can start writing queries in our database. 
 
-1. How many stores do the business have and in which countries?
+1. How many stores does the business have and in which countries?
 ```	
 select country_code, 
 	count (*) 
@@ -161,7 +161,7 @@ ORDER BY    sum(orders_table.product_quantity*dim_products.product_price)  DESC;
 
 
 
-4. Which German store saling the most?
+4. Which German stores make the most sales?
 ```
 SELECT ROUND(CAST(SUM(orders_table.product_quantity*dim_products.product_price) AS numeric), 2) as sales, dim_store_details.store_type, dim_store_details.country_code
 FROM orders_table
@@ -175,7 +175,7 @@ ORDER BY sum(orders_table.product_quantity*dim_products.product_price);
 
 <img width="427" alt="Screenshot 2023-05-21 at 01 32 58" src="https://github.com/pearlroys/multinational-retail-data-centralisation/assets/103274172/84a5dd02-0667-4470-99b9-1cd9240e4ef1">
 
-9. How quickly company making sales?
+9. How quickly is the company making sales?
 
 ```
 SELECT
