@@ -1,4 +1,4 @@
-# multinational-retail-data-centralisation
+# Multinational-Retail-Data-Centralisation
 # Data Centralisation Project
 
 In this project, I have created a powerful data management system using Postgres, AWS S3, boto3, REST API, CSV, and Python (Pandas). The main objectives were to create a local PostgreSQL database, extract data from different sources, clean and process it, and perform SQL queries.
