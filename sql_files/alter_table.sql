@@ -118,7 +118,7 @@ UPDATE dim_products
 select *
 from dim_date_times
 
---alter pdate table	
+--alter date table	
 ALTER TABLE dim_date_times
 	ALTER COLUMN "month" TYPE VARCHAR(255) USING "month"::VARCHAR(255)
 ALTER TABLE dim_date_times

@@ -72,17 +72,6 @@ GROUP BY dim_store_details.store_type,dim_store_details.country_code
 ORDER BY sum(orders_table.product_quantity*dim_products.product_price);
 
 --Task_9_averge_time_to_get_an_order
-ALTER TABLE dim_date_times
-ADD COLUMN time_diff interval;
-
-UPDATE dim_date_times
-SET time_diff = x.time_diff
-FROM (
-  SELECT timestamp, LAG(timestamp) OVER (ORDER BY "day", "month", "year", timestamp DESC ) - timestamp AS time_diff
-  FROM dim_date_times
-  --order by "day", "month"
-) AS x
-WHERE dim_date_times.timestamp = x.timestamp;
 
 
 
