@@ -15,7 +15,6 @@ def upload_dim_users():
     # get clean chosen frame
     df = tables_list[1]
     df = cleaner.clean_user_data(extract.read_rds_tables(df, engine))
-  
     # upload to the local db
     connect_and_upload('dim_users', df)
 
@@ -25,8 +24,7 @@ def upload_dim_card_details():
     # get data from pdf
     df = extract.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf') 
     # clean data
-    df = cleaner.clean_card_data(df)
-    
+    df = cleaner.clean_card_data(df) 
     # upload to the local db
     connect_and_upload('dim_card_details', df)
 
@@ -35,13 +33,12 @@ def upload_dim_store_details():
     cleaner = DataCleaning()
     # get data
     df = extract.retrieve_stores_data()
-
     # clean data 
-    # df = pd.read_csv('frames.csv', index_col=0)
-    # df = cleaner.clean_store_data(df)
-   
-    # # upload to db 
-    # connect_and_upload('dim_store_details', df)
+    df = pd.read_csv('frames.csv', index_col=0)
+    df = cleaner.clean_store_data(df)
+
+    # upload to db 
+    connect_and_upload('dim_store_details', df)
     
 
 
@@ -50,13 +47,9 @@ def upload_dim_products():
     cleaner = DataCleaning()
     # get data from s3
     df =  extract.extract_from_s3()
-    # df.to_csv('dim_products.csv')
     # clean data
-    # print(df[df['user_uuid'] == "c7292f77-3472-4324-b582-492c51ca9a41"]) 
     df =  cleaner.clean_products_data(df)
-    
     df =  cleaner.convert_product_weights(df)
-    # print(df['product_price'].sum())
     # upload to db 
     connect_and_upload('dim_products', df)
     
@@ -82,7 +75,6 @@ def dim_date_times():
     extract = DataExtractor()
     cleaner = DataCleaning()
     df = extract.extract_json_from_s3()
-    # df.to_csv('dim_date_times.csv')
     df = cleaner.clean_date_time(df)
     connect_and_upload('dim_date_times', df)
     

@@ -7,9 +7,7 @@ sys.path.append('../')
 
 
 class DataCleaning:
-    def __init__(self) -> None:
-        # self.reader = DataConnector()
-        pass
+   
         
 
     def clean_user_data(self, df):
@@ -48,12 +46,7 @@ class DataCleaning:
         df[column] = pd.to_datetime(df[column], format='%Y %B %d', errors='ignore')
         df[column] = pd.to_datetime(df[column], format='%B %Y %d', errors='ignore')
         df[column] = pd.to_datetime(df[column], errors='coerce')
-        #     invalid_dates = df[df[column].isnull()]
-        #     if not invalid_dates.empty:
-
-          #         print(invalid_dates)
-        # 36 NaT values were found and dropped.
-        # df = df.dropna(subset=[column],how='all')
+    
         return df
         
     def modify_phone_num(self, df, column):
@@ -71,7 +64,7 @@ class DataCleaning:
 
         # Remove non-digit characters from phone column
         df[column] = df[column].str.replace(r'\D+', '')
-        # df[column].astype(int)
+
 
         # Format phone numbers as (XXX) XXX-XXXX
         df[column] = df[column].apply(lambda x: '{} {}-{}'.format(x[0:3], x[3:6], x[6:]))
@@ -102,8 +95,7 @@ class DataCleaning:
         print(new_df['card_number'])
         
         df = self.format_date(df,'date_payment_confirmed') 
-        print(df.dtypes) 
-        # df.dropna(how='any')
+        print(df.dtypes)
         return df
     
     def remove_char_from_string(self, value):
@@ -127,7 +119,6 @@ class DataCleaning:
         values = ['QP74AHEQT0',
        'O0QJIRC943', '50IB01SFAZ', '0RSNUU3DF5', 'B4KVQB3P5Y',
        'X0FE7E2EOG', 'NN04B3F6UQ']
-        # df = df.drop(df[df['store_type'].isin(values)].index)
         df = df[~df['store_type'].isin(values)]
 
         # Replace multiple values in a specific column using a dictionary where eeruope and eeamerica is present
@@ -161,14 +152,15 @@ class DataCleaning:
         # get all the numbers without the units and convert to float
         df["numbers"] = df["weight"].str.extract("(\d*\.?\d+)", expand=True)
         df['numbers'] = df['numbers'].astype(float)
+       
         # convert weights all to KG
         df['weight (KG)'] = df.loc[df['unit'] == 'x', 'weight'].apply(lambda x: self.extract_numeric_value(x))
         df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'ml', df['numbers']/ 1000)
         df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'kg', df['numbers'])
         df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'g', df['numbers']/ 1000)
         df['weight (KG)'] = df['weight (KG)'].mask(df['unit'] == 'oz', df['numbers']/ 35.27)
-        # remove rows with cryptic and unidentifiable units
         
+        # remove rows with cryptic and unidentifiable units
         df = df[df['unit'] != 'GO']
         df = df[df['unit'] != 'MX']
         df = df[df['unit'] != 'Z']
@@ -185,7 +177,6 @@ class DataCleaning:
     
     def clean_order_data(self, df):
         df.drop(columns='1',inplace=True)
-        # df.drop(columns='Unnamed: 0',inplace=True)
         df.drop(columns='first_name',inplace=True)
         df.drop(columns='last_name',inplace=True)
         del df['index']

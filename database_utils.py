@@ -18,10 +18,13 @@ class DataConnector:
             return data
 
     def init_db_engine(self, data):
-        # db_url = 'postgresql+{RDS_DBAPI}//{RDS_USER}:{RDS_PASSWORD}@{RDS_HOST}:{RDS_PORT}/{RDS_DATABASE}'.format(**self.data)
+        """ this funtion connects to the engine
+        Returns:
+            engine
+        """
         db_url = '{RDS_DATABASEsql}+{RDS_DBAPI}://{RDS_USER}:{RDS_PASSWORD}@{RDS_HOST}:{RDS_PORT}/{RDS_DATABASE}'.format(**data)
-        self.engine = create_engine(db_url)
-        return self.engine
+        engine = create_engine(db_url)
+        return engine
     
     def list_db_tables(self):
         """This function returns an Inspector object, which is a wrapper around the database, 

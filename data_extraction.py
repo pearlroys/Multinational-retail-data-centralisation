@@ -33,7 +33,6 @@ class DataExtractor:
         self.reader = DataConnector()
         self.conn = engine.connect()
         df = pd.read_sql_table(table_name, self.conn)
-        # df.to_csv('Output.csv', index = False)
         return df 
     
     def retrieve_pdf_data(self,link):
@@ -77,7 +76,6 @@ class DataExtractor:
         # Download the JSON file
         response = requests.get(s3_link)
         data = response.json()
-
         # Convert the JSON data to a DataFrame
         df = pd.DataFrame(data)
         return df
@@ -85,11 +83,6 @@ class DataExtractor:
 
             
     
-    
-
-if __name__ == '__main__':
-    extract = DataExtractor()
-    # link = upload_dim_card_details
-    # extract.retrieve_pdf_data(link)
-    
+ 
+   
     
